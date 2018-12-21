@@ -1,6 +1,16 @@
 /*
  * Create a list that holds all of your cards
  */
+var allCards = [
+  'fa-diamond', 'fa-diamond',
+  'fa-paper-plane-o', 'fa-paper-plane-o',
+  'fa-anchor', 'fa-anchor',
+  'fa-bolt', 'fa-bolt',
+  'fa-cube', 'fa-cube',
+  'fa-leaf', 'fa-leaf',
+  'fa-bicycle', 'fa-bicycle',
+  'fa-bomb', 'fa-bomb'
+];
 
 
 /*
@@ -25,6 +35,10 @@ function shuffle(array) {
     return array;
 }
 
+var moves = document.querySelector('.moves');
+var numMoves = 0;
+var stars = document.querySelector('.stars');
+
 
 /*
  * set up the event listener for a card. If a card is clicked:
@@ -37,9 +51,60 @@ function shuffle(array) {
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
 
+function startGame() {
+  var cardDeck = document.querySelector('.deck');
+  var allCardsHTML = [];
+  var shuffledCards = shuffle(allCards);
+  shuffledCards.forEach(function(card) {
+    var createCard = `<li class="card" data-icon="${card}"><i class="fa ${card}"></i></li>`
+    allCardsHTML.push(createCard);
+  });
+  cardDeck.innerHTML = allCardsHTML.join('');
+  moves.innerText = 0;
+  stars.innerHTML = `<li><i class="fa fa-star"></i></li><li><li><i class="fa fa-star"></i></li><li><li><i class="fa fa-star"></i></li><li>`
+
+}
+startGame();
+
 var cards = document.querySelectorAll('.card');
+var openedCards = [];
+
 cards.forEach(function(card) {
   card.addEventListener('click', function(event) {
-    card.classList.add('open', 'show');
+    numMoves += 1;
+    if (numMoves == 10) {
+      console.log("numMoves = 10");
+      stars.removeChild(stars.childNodes[0]);
+    } else if (numMoves == 20) {
+      stars.removeChild(stars.childNodes[0]);
+    }
+
+    if (!(card.classList.contains('open') || card.classList.contains('show') || card.classList.contains('match'))) {
+      openedCards.push(card);
+      card.classList.add('open', 'show');
+
+      if (openedCards.length == 2) {
+        if (openedCards[0].dataset.icon == openedCards[1].dataset.icon) {
+          openedCards.forEach(function(openedCard) {
+            openedCard.classList.add('match');
+            openedCard.classList.remove('open', 'show');
+          })
+          openedCards = [];
+        } else {
+          setTimeout(function() {
+            openedCards.forEach(function(openedCard) {
+              openedCard.classList.remove('open', 'show');
+            })
+            openedCards = [];
+          }, 1500)
+        }
+      }
+    }
+    moves.innerText = numMoves;
   })
+});
+
+var restartBtn = document.querySelector('.restart');
+restartBtn.addEventListener('click', function(event) {
+  startGame();
 })
