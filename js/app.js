@@ -78,13 +78,21 @@ function startGame() {
 
   cards.forEach(function(card) {
     card.addEventListener('click', function(event) {
+      console.log("openedCards ", openedCards);
       numMoves += 1;
-      if (numMoves == 16) {
+      if (numMoves == 32) {
         stars.removeChild(stars.childNodes[0]);
         numStars -= 1;
-      } else if (numMoves == 32) {
+      } else if (numMoves == 48) {
         stars.removeChild(stars.childNodes[0]);
         numStars -= 1;
+      }
+
+      if (openedCards.length == 2) {
+        openedCards.forEach(function(openedCard) {
+          openedCard.classList.remove('open', 'show');
+        })
+        openedCards = [];
       }
 
       if (!(card.classList.contains('open') || card.classList.contains('show') || card.classList.contains('match'))) {
@@ -92,7 +100,7 @@ function startGame() {
         card.classList.add('open', 'show');
 
         if (openedCards.length == 2) {
-          if (openedCards[0].dataset.icon == openedCards[1].dataset.icon) {
+          if (openedCards[0].dataset.icon == openedCards[1].dataset.icon) { // the two opened cards match
             openedCards.forEach(function(openedCard) {
               openedCard.classList.add('match');
               openedCard.classList.remove('open', 'show');
@@ -102,13 +110,13 @@ function startGame() {
               showCongrats(numMoves, numStars, document.querySelector('.timer').innerText);
             }
             openedCards = [];
-          } else {
-            setTimeout(function() {
-              openedCards.forEach(function(openedCard) {
-                openedCard.classList.remove('open', 'show');
-              })
-              openedCards = [];
-            }, 1500)
+          } else { // the two opened cards do not match
+            // setTimeout(function() {
+            //   openedCards.forEach(function(openedCard) {
+            //     openedCard.classList.remove('open', 'show');
+            //   })
+            //   openedCards = [];
+            // }, 1000);
           }
         }
       }
@@ -119,8 +127,14 @@ function startGame() {
 startGame();
 
 function showCongrats(numMoves, numStars, time) {
-  var playAgain = confirm("Congrats! You finished the game in " + time + " with "
-            + numMoves + " moves and " + numStars + " stars. Play again?");
+  if (numStars > 1) {
+    var msg = "Congrats! You finished the game in " + time + " with "
+              + numMoves + " moves and " + numStars + " stars. Play again?"
+  } else {
+    var msg = "Congrats! You finished the game in " + time + " with "
+              + numMoves + " moves and " + numStars + " star. Play again?"
+  }
+  var playAgain = confirm(msg);
   if (playAgain) {
     clearInterval(timer);
     startGame();
