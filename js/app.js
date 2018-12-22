@@ -37,7 +37,7 @@ function shuffle(array) {
 
 var moves = document.querySelector('.moves');
 var stars = document.querySelector('.stars');
-
+var numMoves = 0;
 
 /*
  * set up the event listener for a card. If a card is clicked:
@@ -59,10 +59,13 @@ function startGame() {
     allCardsHTML.push(createCard);
   });
   cardDeck.innerHTML = allCardsHTML.join('');
-  var numMoves = 0;
-  moves.innerText = 0;
+
+  numMoves = 0;
   stars.innerHTML = `<li><i class="fa fa-star"></i></li><li><i class="fa fa-star"></i></li><li><i class="fa fa-star"></i></li>`
+
+  moves.innerText = "0";
   document.querySelector('.timer').innerText = "00:00:00";
+
   timer = setInterval(clock, 1000);
   sec = 0;
   min = 0;
@@ -70,15 +73,18 @@ function startGame() {
 
   var cards = document.querySelectorAll('.card');
   var openedCards = [];
+  var numMatchedPairs = 0;
+  var numStars = 3;
 
   cards.forEach(function(card) {
     card.addEventListener('click', function(event) {
-      console.log("clicked");
       numMoves += 1;
-      if (numMoves == 10) {
+      if (numMoves == 16) {
         stars.removeChild(stars.childNodes[0]);
-      } else if (numMoves == 20) {
+        numStars -= 1;
+      } else if (numMoves == 32) {
         stars.removeChild(stars.childNodes[0]);
+        numStars -= 1;
       }
 
       if (!(card.classList.contains('open') || card.classList.contains('show') || card.classList.contains('match'))) {
@@ -90,7 +96,11 @@ function startGame() {
             openedCards.forEach(function(openedCard) {
               openedCard.classList.add('match');
               openedCard.classList.remove('open', 'show');
-            })
+            });
+            numMatchedPairs += 1;
+            if (numMatchedPairs == 8) {
+              showCongrats(numMoves, numStars, document.querySelector('.timer').innerText);
+            }
             openedCards = [];
           } else {
             setTimeout(function() {
@@ -107,6 +117,15 @@ function startGame() {
   });
 }
 startGame();
+
+function showCongrats(numMoves, numStars, time) {
+  var playAgain = confirm("Congrats! You finished the game in " + time + " with "
+            + numMoves + " moves and " + numStars + " stars. Play again?");
+  if (playAgain) {
+    clearInterval(timer);
+    startGame();
+  }
+}
 
 var timer;
 var sec;
