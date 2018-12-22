@@ -83,8 +83,6 @@ function startGame() {
               openedCard.classList.remove('open', 'show');
               matchedCards.push(openedCard);
             });
-            // numMatchedPairs += 1;
-            console.log("matchedCards ", matchedCards);
             openedCards = [];
           }
         }
@@ -102,11 +100,6 @@ function startGame() {
 startGame();
 
 function showCongrats(numMoves, numStars, time) {
-  // var d = new Date();
-  // d.setHours();
-  // d.setSeconds(d.getSeconds()-1);
-  //
-  // console.log("time ", time);
   if (numStars > 1) {
     var msg = "Congrats! You finished the game in " + time + " with "
               + numMoves + " moves and " + numStars + " stars. Play again?"
