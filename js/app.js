@@ -73,12 +73,11 @@ function startGame() {
 
   var cards = document.querySelectorAll('.card');
   var openedCards = [];
-  var numMatchedPairs = 0;
+  var matchedCards = [];
   var numStars = 3;
 
   cards.forEach(function(card) {
     card.addEventListener('click', function(event) {
-      console.log("openedCards ", openedCards);
       numMoves += 1;
       if (numMoves == 32) {
         stars.removeChild(stars.childNodes[0]);
@@ -100,27 +99,25 @@ function startGame() {
         card.classList.add('open', 'show');
 
         if (openedCards.length == 2) {
-          if (openedCards[0].dataset.icon == openedCards[1].dataset.icon) { // the two opened cards match
+          if (openedCards[0].dataset.icon == openedCards[1].dataset.icon) {
             openedCards.forEach(function(openedCard) {
               openedCard.classList.add('match');
               openedCard.classList.remove('open', 'show');
+              matchedCards.push(openedCard);
             });
-            numMatchedPairs += 1;
-            if (numMatchedPairs == 8) {
-              showCongrats(numMoves, numStars, document.querySelector('.timer').innerText);
-            }
+            // numMatchedPairs += 1;
+            console.log("matchedCards ", matchedCards);
             openedCards = [];
-          } else { // the two opened cards do not match
-            // setTimeout(function() {
-            //   openedCards.forEach(function(openedCard) {
-            //     openedCard.classList.remove('open', 'show');
-            //   })
-            //   openedCards = [];
-            // }, 1000);
           }
         }
       }
       moves.innerText = numMoves;
+      if (matchedCards.length == 16) {
+        setTimeout( function() {
+          showCongrats(numMoves, numStars, document.querySelector('.timer').innerText)
+        },
+        1000);
+      }
     })
   });
 }
